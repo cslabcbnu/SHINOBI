@@ -34,24 +34,55 @@ cd SHINOBI
 make
 ```
 
+### Usage
+```bash
+Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>]
+  -m <size>      memory size that you need (e.g. 8g, 512m, 1024k)
+  -s0 <num>      sequence 0 (Sequential Sum Calculation) repeat times (default: 1)
+  -s1 <num>      sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)
+  -s2 <num>      sequence 2 (Sattolo Algorithm Shuffle ~ Heappify) repeat times (default: 1)
+```
+
 ## Example
 ```bash
-./SHINOBI 8g
+./SHINOBI_BASE -m 1g -s0 3 -s2 3 -s1 3
 
 Benchmarking ready
-execution time : 0h 0m 11s 718ms
-Sequential summation done
-execution time : 0h 0m 13s 963ms
-Binary search done
-execution time : 0h 6m 24s 468ms
-All data shuffle done
-execution time : 0h 2m 53s 756ms
-Shuffle summation done
-execution time : 0h 4m 7s 220ms
-Heapify / Heappop done
-execution time : 0h 34m 55s 238ms
+execution time : 0h 0m 1s 522ms
+Sequential Sum Calculation repeat 2 times remaining
+execution time : 0h 0m 0s 609ms
+Sequential Sum Calculation repeat 1 times remaining
+execution time : 0h 0m 0s 469ms
+Sequential Sum Calculation done
+execution time : 0h 0m 0s 679ms
+Binary Search Sum Calculation repeat 2 times remaining
+execution time : 0h 0m 14s 907ms
+Binary Search Sum Calculation repeat 1 times remaining
+execution time : 0h 0m 14s 579ms
+Binary Search Sum Calculation done
+execution time : 0h 0m 14s 778ms
+Sattolo Algorithm Shuffle repeat 2 times remaining
+execution time : 0h 0m 17s 893ms
+Tracked Shuffle Sum Calculation repeat 2 times remaining
+execution time : 0h 0m 25s 199ms
+Heapify repeat 2 times remaining
+execution time : 0h 0m 2s 440ms
+Sattolo Algorithm Shuffle repeat 1 times remaining
+execution time : 0h 0m 17s 75ms
+Tracked Shuffle Sum Calculation repeat 1 times remaining
+execution time : 0h 0m 25s 359ms
+Heapify repeat 1 times remaining
+execution time : 0h 0m 2s 417ms
+Sattolo Algorithm Shuffle done
+execution time : 0h 0m 17s 85ms
+Tracked Shuffle Sum Calculation done
+execution time : 0h 0m 25s 945ms
+Heapify done
+execution time : 0h 0m 2s 412ms
+Heappop done
+execution time : 0h 1m 15s 684ms
 ```
-![Image](https://github.com/user-attachments/assets/f579d1d1-26d9-4bd2-89d3-15735b0d7bfd)
+![Image](https://github.com/user-attachments/assets/ce9f82dd-f0e3-44b9-b5de-5fceb2ddee52)
 
 *recorded by damo(https://github.com/damonitor/damo)
 
