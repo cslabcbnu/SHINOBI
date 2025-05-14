@@ -1,11 +1,13 @@
 CC = gcc
 CFLAGS = -Wall -O2
-TARGET = SHINOBI
-SRCS = main.c
-all: $(TARGET)
+TARGETS = SHINOBI_BASE SHINOBI_ALT
+all: $(TARGETS)
 
-$(TARGET): $(SRCS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRCS)
+SHINOBI_BASE: shinobi_base.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+#SHINOBI_ALT: shinobi_alt.c
+#	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
