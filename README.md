@@ -19,6 +19,7 @@ The SHINOBI benchmark is structured around the following steps. The time taken t
 3.  **Sattolo Algorithm Shuffle**: Shuffle all elements of the array using the Sattolo algorithm.
 4.  **Tracked Shuffle Sum Calculation**: Calculate the sum of the entire array by tracking values after the shuffle.
 5.  **Heap Sort Sum Calculation**: Heapify the entire array, then attempt to `heappop` every element to calculate the sum.
+6.  **Quick Sort**: Execute quick sort, then check all elements' sorting state.
 
 Execution time of each step is measured and reported to `stdout`.
 
@@ -36,53 +37,62 @@ make
 
 ### Usage
 ```bash
-Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>]
+Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>] [-s4 <num>]
   -m <size>      memory size that you need (e.g. 8g, 512m, 1024k)
   -s0 <num>      sequence 0 (Sequential Sum Calculation) repeat times (default: 1)
   -s1 <num>      sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)
-  -s2 <num>      sequence 2 (Sattolo Algorithm Shuffle ~ Heappify) repeat times (default: 1)
+  -s2 <num>      sequence 2 (Sattolo Algorithm Shuffle ~ Tracked Summation) repeat times (default: 1)
+  -s3 <num>      sequence 3 (Sattolo Algorithm Shuffle ~ Heap Sort) repeat times (default: 1)
+  -s4 <num>      sequence 4 (Sattolo Algorithm Shuffle ~ Quick Sort) repeat times (default: 1)
 ```
 
 ## Example
 ```bash
-./SHINOBI_BASE -m 1g -s0 3 -s2 3 -s1 3
+./SHINOBI_BASE -m 1g -s0 2 -s2 2 -s1 2 -s3 2
 
+execution time : 0h 0m 1s 445ms
 Benchmarking ready
-execution time : 0h 0m 1s 522ms
-Sequential Sum Calculation repeat 2 times remaining
-execution time : 0h 0m 0s 609ms
+execution time : 0h 0m 0s 701ms
 Sequential Sum Calculation repeat 1 times remaining
-execution time : 0h 0m 0s 469ms
+execution time : 0h 0m 0s 93ms
 Sequential Sum Calculation done
-execution time : 0h 0m 0s 679ms
-Binary Search Sum Calculation repeat 2 times remaining
-execution time : 0h 0m 14s 907ms
+Press Ctrl+C to stop
+execution time : 0h 0m 13s 440ms
 Binary Search Sum Calculation repeat 1 times remaining
-execution time : 0h 0m 14s 579ms
+execution time : 0h 0m 13s 763ms
 Binary Search Sum Calculation done
-execution time : 0h 0m 14s 778ms
-Sattolo Algorithm Shuffle repeat 2 times remaining
-execution time : 0h 0m 17s 893ms
-Tracked Shuffle Sum Calculation repeat 2 times remaining
-execution time : 0h 0m 25s 199ms
-Heapify repeat 2 times remaining
-execution time : 0h 0m 2s 440ms
-Sattolo Algorithm Shuffle repeat 1 times remaining
-execution time : 0h 0m 17s 75ms
-Tracked Shuffle Sum Calculation repeat 1 times remaining
-execution time : 0h 0m 25s 359ms
-Heapify repeat 1 times remaining
-execution time : 0h 0m 2s 417ms
+execution time : 0h 0m 20s 447ms
 Sattolo Algorithm Shuffle done
-execution time : 0h 0m 17s 85ms
+execution time : 0h 0m 29s 549ms
+Tracked Shuffle Sum Calculation repeat 1 times remaining
+execution time : 0h 0m 19s 141ms
+Sattolo Algorithm Shuffle done
+execution time : 0h 0m 28s 904ms
 Tracked Shuffle Sum Calculation done
-execution time : 0h 0m 25s 945ms
+execution time : 0h 0m 19s 807ms
+Sattolo Algorithm Shuffle done
+execution time : 0h 0m 2s 164ms
 Heapify done
-execution time : 0h 0m 2s 412ms
+execution time : 0h 1m 18s 613ms
 Heappop done
-execution time : 0h 1m 15s 684ms
+Heapify / Heappop repeat 1 times remaining
+execution time : 0h 0m 19s 976ms
+Sattolo Algorithm Shuffle done
+execution time : 0h 0m 2s 249ms
+Heapify done
+execution time : 0h 1m 18s 759ms
+Heappop done
+Heapify / Heappop done
+execution time : 0h 0m 19s 719ms
+Sattolo Algorithm Shuffle done
+execution time : 0h 0m 21s 197ms
+Quick Sort repeat 1 times remaining
+execution time : 0h 0m 19s 843ms
+Sattolo Algorithm Shuffle done
+execution time : 0h 0m 21s 259ms
+Quick Sort done
 ```
-![Image](https://github.com/user-attachments/assets/ce9f82dd-f0e3-44b9-b5de-5fceb2ddee52)
+![Image](https://github.com/user-attachments/assets/254bb105-ca4e-4943-b314-9d1418aae687)
 
 *recorded by damo(https://github.com/damonitor/damo)
 
