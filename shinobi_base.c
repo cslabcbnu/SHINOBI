@@ -5,6 +5,9 @@
 #include <time.h>
 
 
+long long int idx;
+
+
 int parse_size(const char* input, long long int* value_out) {
 	int len = strlen(input);
 	if (len < 2) return -1;
@@ -49,7 +52,8 @@ void print_usage(const char* prog) {
 		"  -m <size>	 memory size that you need (e.g. 8g, 512m, 1024k)\n"
 		"  -s0 <num>	 sequence 0 (Sequential Sum Calculation) repeat times (default: 1)\n"
 		"  -s1 <num>	 sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)\n"
-		"  -s2 <num>	 sequence 2 (Sattolo Algorithm Shuffle ~ Heappify) repeat times (default: 1)\n",
+		"  -s2 <num>	 sequence 2 (Sattolo Algorithm Shuffle ~ Tracked Summation) repeat times (default: 1)\n"
+		"  -s3 <num>	 sequence 2 (Sattolo Algorithm Shuffle ~ Heap Sort) repeat times (default: 1)\n",
 		prog
 	);
 }
@@ -81,19 +85,6 @@ int binary_search(long long int* arr, long long int left, long long int right, l
 	}
 
 	return -1;
-}
-
-
-void shuffle(long long int* arr, long long int idx) {
-	for (long long int i = 0; i < idx; i++) {
-		arr[i] = i;
-	}
-	for (long long int i = idx - 1; i > 0; i--) {
-		long long int j = rand() % i;
-		long long int temp = arr[i];
-		arr[i] = arr[j];
-		arr[j] = temp;
-	}
 }
 
 
@@ -142,6 +133,100 @@ long long int heappop(long long int* arr, long long int* idx) {
 }
 
 
+void seq_sum(long long int* bench) {
+	long long int ans = idx * (idx - 1) / 2;
+	long long int target = 0;
+
+	clock_t start = clock();
+	for (long long int i = 0; i < idx; i++) {
+		target += bench[i];
+	}
+	if (target != ans) {
+		fprintf(stderr, "Error: Sequential Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
+		exit(-1); 
+	}
+	clock_t end = clock();
+	print_execution_time(start, end);
+}
+
+
+void bin_sum(long long int* bench) {
+	long long int ans = idx * (idx - 1) / 2;
+	long long int target = 0;
+	
+	clock_t start = clock();
+	for (long long int i = 0; i < idx; i++) {
+		target += binary_search(bench, 0, idx - 1, i);
+	}
+	if (target != ans) {
+		fprintf(stderr, "Error: Binary Search Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
+		exit(-1); 
+	}
+	clock_t end = clock();
+	print_execution_time(start, end);
+}
+
+
+void shuffle(long long int* bench) {
+	clock_t start = clock();
+	for (long long int i = 0; i < idx; i++) {
+		bench[i] = i;
+	}
+	for (long long int i = idx - 1; i > 0; i--) {
+		long long int j = rand() % i;
+		long long int temp = bench[i];
+		bench[i] = bench[j];
+		bench[j] = temp;
+	}
+	clock_t end = clock();
+	print_execution_time(start, end);
+	fprintf(stdout, "Sattolo Algorithm Shuffle done\n");
+}
+
+
+void shuffle_sum(long long int* bench) {
+	shuffle(bench);
+	long long int ans = idx * (idx - 1) / 2;
+	long long int target = 0;
+	long long int i = 0;
+	clock_t start = clock();
+	do {
+		target += bench[i];
+		i = bench[i];
+	} while (i != 0);
+	if (target != ans) {
+		fprintf(stderr, "Error: Tracked Shuffle Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
+		exit(-1); 
+	}
+	clock_t end = clock();
+	print_execution_time(start, end);
+}
+
+
+void heap(long long int* bench) {
+	shuffle(bench);
+	long long int hsize = idx;
+	long long int ans = idx * (idx - 1) / 2;
+	long long int target = 0;
+	
+	clock_t start = clock();
+	for (long long int i = hsize / 2 - 1; i >= 0; i--) heapify(bench, idx, i);
+	clock_t end = clock();
+	print_execution_time(start, end);
+	fprintf(stdout, "Heapify done\n");
+
+	start = clock();
+	for (long long int i = 0; i < idx; i++) target += heappop(bench, &hsize);
+	if (target != ans) {
+		fprintf(stderr, "Error: Heapify / Heappop failed., ans = %lld target = %lld\n", ans, target);
+		exit(-1); 
+	}
+	end = clock();
+	print_execution_time(start, end);
+	fprintf(stdout, "Heappop done\n");
+}
+
+
 int main(int argc, char *argv[]) {
 	long long m_size = -1;
 	int s[4] = {1, 1, 1, 1};
@@ -179,10 +264,8 @@ int main(int argc, char *argv[]) {
 
 	srand(time(NULL));
 	clock_t start, end;
-	long long int idx = m_size / 8;
-	long long int ans = idx * (idx - 1) / 2;
-	long long int target = 0;
-
+	idx = m_size / 8;
+	
 	// 0. Benchmark preparation
 	start = clock();
 
@@ -195,138 +278,40 @@ int main(int argc, char *argv[]) {
 		bench[i] = i;
 	}
 	end = clock();
-	fprintf(stdout, "Benchmarking ready\n");
 	print_execution_time(start, end);
+	fprintf(stdout, "Benchmarking ready\n");
 
 	// 1. Sequential Summation
 	while (s[0] > 1) {
-		start = clock();
-		for (long long int i = 0; i < idx; i++) {
-			target += bench[i];
-		}
-		if (target != ans) {
-			fprintf(stderr, "Error: Sequential Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
-			return -1; 
-		}
-		end = clock();
+		seq_sum(bench);
 		fprintf(stdout, "Sequential Sum Calculation repeat %d times remaining\n", --s[0]);
-		print_execution_time(start, end);
-		target = 0;
 	}
-	start = clock();
-	for (long long int i = 0; i < idx; i++) {
-		target += bench[i];
-	}
-	if (target != ans) {
-		fprintf(stderr, "Error: Sequential Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
-		return -1; 
-	}
-	end = clock();
+	seq_sum(bench);
 	fprintf(stdout, "Sequential Sum Calculation done\n");
-	print_execution_time(start, end);
-	target = 0;
 
 	// 2. Binary Search Summation
 	while (s[1] > 1) {
-		start = clock();
-		for (long long int i = 0; i < idx; i++) {
-			target += binary_search(bench, 0, idx - 1, i);
-		}
-		if (target != ans) {
-			fprintf(stderr, "Error: Binary Search Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
-			return -1; 
-		}
-		end = clock();
+		bin_sum(bench);
 		fprintf(stdout, "Binary Search Sum Calculation repeat %d times remaining\n", --s[1]);
-		print_execution_time(start, end);
-		target = 0;
 	}
-	start = clock();
-	for (long long int i = 0; i < idx; i++) {
-		target += binary_search(bench, 0, idx - 1, i);
-	}
-	if (target != ans) {
-		fprintf(stderr, "Error: Binary Search Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
-		return -1; 
-	}
-	end = clock();
+	bin_sum(bench);
 	fprintf(stdout, "Binary Search Sum Calculation done\n");
-	print_execution_time(start, end);
-
-
-	while (s[2] > 1) {
-		start = clock();
-		shuffle(bench, idx);
-		end = clock();
-		fprintf(stdout, "Sattolo Algorithm Shuffle repeat %d times remaining\n", --s[2]);
-		print_execution_time(start, end);
-
-		start = clock();
-		long long int i = 0;
-		target = 0;
-		do {
-			target += bench[i];
-			i = bench[i];
-		} while (i != 0);
-		if (target != ans) {
-			fprintf(stderr, "Error: Tracked Shuffle Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
-			return -1; 
-		}
-		end = clock();
-		fprintf(stdout, "Tracked Shuffle Sum Calculation repeat %d times remaining\n", s[2]);
-		print_execution_time(start, end);
-
-		start = clock();
-		long long int hsize = idx;
-		target = 0;
-		for (long long int i = hsize / 2 - 1; i >= 0; i--) heapify(bench, idx, i);
-		end = clock();
-		fprintf(stdout, "Heapify repeat %d times remaining\n", s[2]);
-		print_execution_time(start, end);
-	}
-	// 3. Data Shuffle (Sattolo Algorithm)
-	start = clock();
-	shuffle(bench, idx);
-	end = clock();
-	fprintf(stdout, "Sattolo Algorithm Shuffle done\n");
-	print_execution_time(start, end);
 
 	// 4. Shuffle Summation
-	start = clock();
-	long long int i = 0;
-	target = 0;
-	do {
-		target += bench[i];
-		i = bench[i];
-	} while (i != 0);
-	if (target != ans) {
-		fprintf(stderr, "Error: Tracked Shuffle Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
-		return -1; 
+	while (s[2] > 1) {
+		shuffle_sum(bench);
+		fprintf(stdout, "Tracked Shuffle Sum Calculation repeat %d times remaining\n", --s[2]);
 	}
-	end = clock();
+	shuffle_sum(bench);
 	fprintf(stdout, "Tracked Shuffle Sum Calculation done\n");
-	print_execution_time(start, end);
-
-	// 5. Heapify
-	start = clock();
-	long long int hsize = idx;
-	target = 0;
-	for (long long int i = hsize / 2 - 1; i >= 0; i--) heapify(bench, idx, i);
-	end = clock();
-	fprintf(stdout, "Heapify done\n");
-	print_execution_time(start, end);
-
-	// 6. Heappop All
-	start = clock();
-	for (long long int i = 0; i < idx; i++) target += heappop(bench, &hsize);
-	if (target != ans) {
-		fprintf(stderr, "Error: Heapify / Heappop failed., ans = %lld target = %lld\n", ans, target);
-		return -1; 
+	
+	// 5. Heapify / Heappop
+	while (s[3] > 1) {
+		heap(bench);
+		fprintf(stdout, "Heapify / Heappop repeat %d times remaining\n", --s[3]);
 	}
-	end = clock();
-	fprintf(stdout, "Heappop done\n");
-	print_execution_time(start, end);
-
+	heap(bench);
+	fprintf(stdout, "Heapify / Heappop done\n");
 
 	free(bench);
 	return 0;
