@@ -48,12 +48,13 @@ int parse_size(const char* input, long long int* value_out) {
 
 void print_usage(const char* prog) {
 	fprintf(stderr,
-		"Usage: %s -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>]\n"
+		"Usage: %s -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>] [-s4 <num>]\n"
 		"  -m <size>	 memory size that you need (e.g. 8g, 512m, 1024k)\n"
 		"  -s0 <num>	 sequence 0 (Sequential Sum Calculation) repeat times (default: 1)\n"
 		"  -s1 <num>	 sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)\n"
 		"  -s2 <num>	 sequence 2 (Sattolo Algorithm Shuffle ~ Tracked Summation) repeat times (default: 1)\n"
-		"  -s3 <num>	 sequence 2 (Sattolo Algorithm Shuffle ~ Heap Sort) repeat times (default: 1)\n",
+		"  -s3 <num>	 sequence 3 (Sattolo Algorithm Shuffle ~ Heap Sort) repeat times (default: 1)\n"
+		"  -s4 <num>	 sequence 4 (Sattolo Algorithm Shuffle ~ Quick Sort) repeat times (default: 1)\n",
 		prog
 	);
 }
@@ -67,6 +68,13 @@ void print_execution_time(clock_t start, clock_t end) {
 	int msec = (int)(end - start) % 1000;
 
 	fprintf(stdout, "execution time : %dh %dm %ds %dms\n", hours, min, sec, msec);
+}
+
+
+void swap(long long int* a, long long int* b) {
+	long long int temp = *a;
+	*a = *b;
+	*b = temp;
 }
 
 
@@ -99,10 +107,8 @@ void heapify(long long int* arr, long long int idx, long long int i) {
 		if (right < idx && arr[right] > arr[next]) next = right;
 		if (next == max) break;
 		
-		long long int temp = arr[max];
-		arr[max] = arr[next];
-		arr[next] = temp;
 
+		swap(&arr[max], &arr[next]);
 		max = next;
 	}
 }
@@ -123,13 +129,34 @@ long long int heappop(long long int* arr, long long int* idx) {
 		if (right < *idx && arr[right] > arr[max]) max = right;
 		if (max == i) break;
 
-		long long int temp = arr[i];
-		arr[i] = arr[max];
-		arr[max] = temp;
+		swap(&arr[i], &arr[max]);
 		i = max;
 	}
 
 	return pop;
+}
+
+
+long long int partition(long long int* arr, long long int low, long long int high) {
+	long long int pivot = arr[high];
+	long long int i = low - 1;
+	for (long long int j = low; j < high; j++) {
+		if (arr[j] <= pivot) {
+			i += 1;
+			swap(&arr[i], &arr[j]);
+		}
+	}
+	swap(&arr[i + 1], &arr[high]);
+	return i + 1;
+}
+
+
+void quick_sort(long long int* arr, long long int low, long long int high) {
+	if (low < high) {
+		long long int p = partition(arr, low, high);
+		quick_sort(arr, low, p -1);
+		quick_sort(arr, p + 1, high);
+	}
 }
 
 
@@ -174,9 +201,7 @@ void shuffle(long long int* bench) {
 	}
 	for (long long int i = idx - 1; i > 0; i--) {
 		long long int j = rand() % i;
-		long long int temp = bench[i];
-		bench[i] = bench[j];
-		bench[j] = temp;
+		swap(&bench[i], &bench[j]);
 	}
 	clock_t end = clock();
 	print_execution_time(start, end);
@@ -227,9 +252,24 @@ void heap(long long int* bench) {
 }
 
 
+void quick(long long int* bench) {
+	shuffle(bench);
+	clock_t start = clock();
+	quick_sort(bench, 0, idx - 1);
+	for (long long int i = 0; i < idx; i++) {
+		if (bench[i] != i) {
+			fprintf(stderr, "Error: Quick Sort failed, bench[%lld] == %lld\n", i, bench[i]);
+			exit(-1);
+		}
+	}
+	clock_t end = clock();
+	print_execution_time(start, end);
+}
+
+
 int main(int argc, char *argv[]) {
 	long long m_size = -1;
-	int s[4] = {1, 1, 1, 1};
+	int s[5] = {1, 1, 1, 1, 1};
 
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-m") == 0 && i+1 < argc) {
@@ -239,7 +279,7 @@ int main(int argc, char *argv[]) {
 				return -1;
 			}
 			i++;
-		} else if (strncmp(argv[i], "-s", 2) == 0 && strlen(argv[i]) == 3 && argv[i][2] >= '0' && argv[i][2] <= '3' && i+1 < argc) {
+		} else if (strncmp(argv[i], "-s", 2) == 0 && strlen(argv[i]) == 3 && argv[i][2] >= '0' && argv[i][2] <= '4' && i+1 < argc) {
 			int idx = argv[i][2] - '0';
 			int sval = atoi(argv[i+1]);
 			if (sval < 1) {
@@ -312,6 +352,15 @@ int main(int argc, char *argv[]) {
 	}
 	heap(bench);
 	fprintf(stdout, "Heapify / Heappop done\n");
+
+
+	// 6. Quick Sort
+	while (s[4] > 1) {
+		quick(bench);
+		fprintf(stdout, "Quick Sort repeat %d times remaining\n", --s[4]);	
+	}
+	quick(bench);
+	fprintf(stdout, "Quick Sort done\n");	
 
 	free(bench);
 	return 0;
