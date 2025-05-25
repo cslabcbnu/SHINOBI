@@ -45,6 +45,7 @@ Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 
   -s3 <num>      sequence 3 (Sattolo Algorithm Shuffle ~ Heap Sort) repeat times (default: 1)
   -s4 <num>      sequence 4 (Sattolo Algorithm Shuffle ~ Quick Sort) repeat times (default: 1)
 ```
+If you want to disable some sequence, type 0 that sequence
 
 ## Example
 ```bash
