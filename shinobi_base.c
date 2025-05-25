@@ -65,9 +65,9 @@ void print_execution_time(clock_t start, clock_t end) {
 	int hours = (int)(elapsed_time / 3600);
 	int min = ((int)(elapsed_time) % 3600) / 60;
 	int sec = (int)(elapsed_time) % 60;
-	int msec = (int)(end - start) % 1000;
+	int msec = (int)((elapsed_time - (int)elapsed_time) * 1000);
 
-	fprintf(stdout, "execution time : %dh %dm %ds %dms\n", hours, min, sec, msec);
+	fprintf(stdout, "[RESULT] Execution Time : %dh %dm %ds %dms\n", hours, min, sec, msec);
 }
 
 
@@ -169,7 +169,7 @@ void seq_sum(long long int* bench) {
 		target += bench[i];
 	}
 	if (target != ans) {
-		fprintf(stderr, "Error: Sequential Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
+		fprintf(stderr, "[ERROR]  Sequential Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
 		exit(-1); 
 	}
 	clock_t end = clock();
@@ -186,7 +186,7 @@ void bin_sum(long long int* bench) {
 		target += binary_search(bench, 0, idx - 1, i);
 	}
 	if (target != ans) {
-		fprintf(stderr, "Error: Binary Search Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
+		fprintf(stderr, "[ERROR]  Binary Search Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
 		exit(-1); 
 	}
 	clock_t end = clock();
@@ -205,7 +205,7 @@ void shuffle(long long int* bench) {
 	}
 	clock_t end = clock();
 	print_execution_time(start, end);
-	fprintf(stdout, "Sattolo Algorithm Shuffle done\n");
+	fprintf(stdout, "[ALERT]  Sattolo Algorithm Shuffle done\n");
 }
 
 
@@ -220,7 +220,7 @@ void shuffle_sum(long long int* bench) {
 		i = bench[i];
 	} while (i != 0);
 	if (target != ans) {
-		fprintf(stderr, "Error: Tracked Shuffle Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
+		fprintf(stderr, "[ERROR]  Tracked Shuffle Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
 		exit(-1); 
 	}
 	clock_t end = clock();
@@ -231,24 +231,23 @@ void shuffle_sum(long long int* bench) {
 void heap(long long int* bench) {
 	shuffle(bench);
 	long long int hsize = idx;
-	long long int ans = idx * (idx - 1) / 2;
-	long long int target = 0;
 	
 	clock_t start = clock();
 	for (long long int i = hsize / 2 - 1; i >= 0; i--) heapify(bench, idx, i);
 	clock_t end = clock();
 	print_execution_time(start, end);
-	fprintf(stdout, "Heapify done\n");
+	fprintf(stdout, "[ALERT]  Heapify done\n");
 
 	start = clock();
-	for (long long int i = 0; i < idx; i++) target += heappop(bench, &hsize);
-	if (target != ans) {
-		fprintf(stderr, "Error: Heapify / Heappop failed., ans = %lld target = %lld\n", ans, target);
-		exit(-1); 
+	for (long long int i = idx - 1; i >= 0; i--) {
+		if (i !=  heappop(bench, &hsize)) {
+			fprintf(stderr, "[ERROR]  Heapify / Heappop failed., target = %lld\n", i);
+			exit(-1); 
+		}
 	}
 	end = clock();
 	print_execution_time(start, end);
-	fprintf(stdout, "Heappop done\n");
+	fprintf(stdout, "[ALERT]  Heappop done\n");
 }
 
 
@@ -258,7 +257,7 @@ void quick(long long int* bench) {
 	quick_sort(bench, 0, idx - 1);
 	for (long long int i = 0; i < idx; i++) {
 		if (bench[i] != i) {
-			fprintf(stderr, "Error: Quick Sort failed, bench[%lld] == %lld\n", i, bench[i]);
+			fprintf(stderr, "[ERROR]  Quick Sort failed, bench[%lld] == %lld\n", i, bench[i]);
 			exit(-1);
 		}
 	}
@@ -274,7 +273,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "-m") == 0 && i+1 < argc) {
 			if (parse_size(argv[i+1], &m_size) != 0) {
-				fprintf(stderr, "Error: Invalid -m argument.\n");
+				fprintf(stderr, "[ERROR]  Invalid -m argument.\n");
 				print_usage(argv[0]);
 				return -1;
 			}
@@ -282,22 +281,22 @@ int main(int argc, char *argv[]) {
 		} else if (strncmp(argv[i], "-s", 2) == 0 && strlen(argv[i]) == 3 && argv[i][2] >= '0' && argv[i][2] <= '4' && i+1 < argc) {
 			int idx = argv[i][2] - '0';
 			int sval = atoi(argv[i+1]);
-			if (sval < 1) {
-				fprintf(stderr, "Error: -s%d must be >= 1.\n", idx);
+			if (sval < 0) {
+				fprintf(stderr, "[ERROR]  -s%d must be >= 0.\n", idx);
 				print_usage(argv[0]);
 				return -1;
 			}
 			s[idx] = sval;
 			i++;
 		} else {
-			fprintf(stderr, "Unknown or incomplete option: %s\n", argv[i]);
+			fprintf(stderr, "[ERROR]  Unknown or incomplete option: %s\n", argv[i]);
 			print_usage(argv[0]);
 			return -1;
 		}
 	}
 
 	if (m_size == -1) {
-		fprintf(stderr, "Error: -m option is required.\n");
+		fprintf(stderr, "[ERROR]  -m option is required.\n");
 		print_usage(argv[0]);
 		return -1;
 	}
@@ -311,7 +310,7 @@ int main(int argc, char *argv[]) {
 
 	long long int* bench = (long long int*)malloc(idx * sizeof(long long int));
 	if (!bench) {
-		fprintf(stderr, "Error: Memmory allocation failed\n");
+		fprintf(stderr, "[ERROR]  Memmory allocation failed\n");
 		return -1;
 	}
 	for (long long int i = 0; i < idx; i++) {
@@ -319,48 +318,46 @@ int main(int argc, char *argv[]) {
 	}
 	end = clock();
 	print_execution_time(start, end);
-	fprintf(stdout, "Benchmarking ready\n");
+	fprintf(stdout, "[ALERT]  Benchmarking ready\n\n");
 
 	// 1. Sequential Summation
-	while (s[0] > 1) {
+	while (s[0] > 0) {
 		seq_sum(bench);
-		fprintf(stdout, "Sequential Sum Calculation repeat %d times remaining\n", --s[0]);
+		if (s[0]-- > 1) fprintf(stdout, "[ALERT]  Sequential Sum Calculation repeat %d times remaining\n", s[0]);
+		else fprintf(stdout, "[ALERT]  Sequential Sum Calculation done\n\n");
 	}
-	seq_sum(bench);
-	fprintf(stdout, "Sequential Sum Calculation done\n");
 
 	// 2. Binary Search Summation
-	while (s[1] > 1) {
+	while (s[1] > 0) {
 		bin_sum(bench);
-		fprintf(stdout, "Binary Search Sum Calculation repeat %d times remaining\n", --s[1]);
+		if (s[1]-- > 1) fprintf(stdout, "[ALERT]  Binary Search Sum Calculation repeat %d times remaining\n", s[1]);
+		else fprintf(stdout, "[ALERT]  Binary Search Sum Calculation done\n\n");
 	}
-	bin_sum(bench);
-	fprintf(stdout, "Binary Search Sum Calculation done\n");
 
 	// 4. Shuffle Summation
-	while (s[2] > 1) {
+	while (s[2] > 0) {
 		shuffle_sum(bench);
-		fprintf(stdout, "Tracked Shuffle Sum Calculation repeat %d times remaining\n", --s[2]);
+		if (s[2]-- > 1) fprintf(stdout, "[ALERT]  Tracked Shuffle Sum Calculation repeat %d times remaining\n", s[2]);
+		else fprintf(stdout, "[ALERT]  Tracked Shuffle Sum Calculation done\n\n");
 	}
-	shuffle_sum(bench);
-	fprintf(stdout, "Tracked Shuffle Sum Calculation done\n");
 	
 	// 5. Heapify / Heappop
-	while (s[3] > 1) {
+	while (s[3] > 0) {
 		heap(bench);
-		fprintf(stdout, "Heapify / Heappop repeat %d times remaining\n", --s[3]);
+		if (s[3]-- > 1) fprintf(stdout, "[ALERT]  Heapify / Heappop repeat %d times remaining\n", s[3]);
+		else fprintf(stdout, "[ALERT]  Heapify / Heappop done\n\n");
 	}
-	heap(bench);
-	fprintf(stdout, "Heapify / Heappop done\n");
 
 
 	// 6. Quick Sort
-	while (s[4] > 1) {
+	while (s[4] > 0) {
 		quick(bench);
-		fprintf(stdout, "Quick Sort repeat %d times remaining\n", --s[4]);	
+		if (s[4]-- > 1) fprintf(stdout, "[ALERT]  Quick Sort repeat %d times remaining\n", s[4]);	
+		else fprintf(stdout, "[ALERT]  Quick Sort done\n\n");	
 	}
-	quick(bench);
-	fprintf(stdout, "Quick Sort done\n");	
+
+
+	fprintf(stdout, "[ALERT]  SHINOBI successfully completed.\n");
 
 	free(bench);
 	return 0;
