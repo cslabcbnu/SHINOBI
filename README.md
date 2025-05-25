@@ -48,49 +48,55 @@ Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 
 
 ## Example
 ```bash
-./SHINOBI_BASE -m 1g -s0 2 -s2 2 -s1 2 -s3 2
+./SHINOBI_BASE -m 1g -s0 2 -s2 2 -s1 2 -s3 2 -s4 2
 
-execution time : 0h 0m 1s 445ms
-Benchmarking ready
-execution time : 0h 0m 0s 701ms
-Sequential Sum Calculation repeat 1 times remaining
-execution time : 0h 0m 0s 93ms
-Sequential Sum Calculation done
-Press Ctrl+C to stop
-execution time : 0h 0m 13s 440ms
-Binary Search Sum Calculation repeat 1 times remaining
-execution time : 0h 0m 13s 763ms
-Binary Search Sum Calculation done
-execution time : 0h 0m 20s 447ms
-Sattolo Algorithm Shuffle done
-execution time : 0h 0m 29s 549ms
-Tracked Shuffle Sum Calculation repeat 1 times remaining
-execution time : 0h 0m 19s 141ms
-Sattolo Algorithm Shuffle done
-execution time : 0h 0m 28s 904ms
-Tracked Shuffle Sum Calculation done
-execution time : 0h 0m 19s 807ms
-Sattolo Algorithm Shuffle done
-execution time : 0h 0m 2s 164ms
-Heapify done
-execution time : 0h 1m 18s 613ms
-Heappop done
-Heapify / Heappop repeat 1 times remaining
-execution time : 0h 0m 19s 976ms
-Sattolo Algorithm Shuffle done
-execution time : 0h 0m 2s 249ms
-Heapify done
-execution time : 0h 1m 18s 759ms
-Heappop done
-Heapify / Heappop done
-execution time : 0h 0m 19s 719ms
-Sattolo Algorithm Shuffle done
-execution time : 0h 0m 21s 197ms
-Quick Sort repeat 1 times remaining
-execution time : 0h 0m 19s 843ms
-Sattolo Algorithm Shuffle done
-execution time : 0h 0m 21s 259ms
-Quick Sort done
+[RESULT] Execution Time : 0h 0m 1s 119ms
+[ALERT]  Benchmarking ready
+
+[RESULT] Execution Time : 0h 0m 0s 198ms
+[ALERT]  Sequential Sum Calculation repeat 1 times remaining
+[RESULT] Execution Time : 0h 0m 0s 197ms
+[ALERT]  Sequential Sum Calculation done
+
+[RESULT] Execution Time : 0h 0m 13s 156ms
+[ALERT]  Binary Search Sum Calculation repeat 1 times remaining
+[RESULT] Execution Time : 0h 0m 12s 846ms
+[ALERT]  Binary Search Sum Calculation done
+
+[RESULT] Execution Time : 0h 0m 17s 534ms
+[ALERT]  Sattolo Algorithm Shuffle done
+[RESULT] Execution Time : 0h 0m 25s 813ms
+[ALERT]  Tracked Shuffle Sum Calculation repeat 1 times remaining
+[RESULT] Execution Time : 0h 0m 17s 569ms
+[ALERT]  Sattolo Algorithm Shuffle done
+[RESULT] Execution Time : 0h 0m 26s 78ms
+[ALERT]  Tracked Shuffle Sum Calculation done
+
+[RESULT] Execution Time : 0h 0m 17s 536ms
+[ALERT]  Sattolo Algorithm Shuffle done
+[RESULT] Execution Time : 0h 0m 2s 261ms
+[ALERT]  Heapify done
+[RESULT] Execution Time : 0h 1m 16s 81ms
+[ALERT]  Heappop done
+[ALERT]  Heapify / Heappop repeat 1 times remaining
+[RESULT] Execution Time : 0h 0m 17s 603ms
+[ALERT]  Sattolo Algorithm Shuffle done
+[RESULT] Execution Time : 0h 0m 2s 257ms
+[ALERT]  Heapify done
+[RESULT] Execution Time : 0h 1m 16s 255ms
+[ALERT]  Heappop done
+[ALERT]  Heapify / Heappop done
+
+[RESULT] Execution Time : 0h 0m 17s 458ms
+[ALERT]  Sattolo Algorithm Shuffle done
+[RESULT] Execution Time : 0h 0m 20s 878ms
+[ALERT]  Quick Sort repeat 1 times remaining
+[RESULT] Execution Time : 0h 0m 17s 382ms
+[ALERT]  Sattolo Algorithm Shuffle done
+[RESULT] Execution Time : 0h 0m 20s 684ms
+[ALERT]  Quick Sort done
+
+[ALERT]  SHINOBI successfully completed.
 ```
 ![Image](https://github.com/user-attachments/assets/254bb105-ca4e-4943-b314-9d1418aae687)
 
