@@ -18,7 +18,7 @@ The SHINOBI benchmark is structured around the following steps. The time taken t
 2.  **Binary Search Sum Calculation**: Calculate the sum of the entire array using a binary search approach. 
 3.  **Sattolo Algorithm Shuffle**: Shuffle all elements of the array using the Sattolo algorithm.
 4.  **Tracked Shuffle Sum Calculation**: Calculate the sum of the entire array by tracking values after the shuffle.
-5.  **Heap Sort Sum Calculation**: Heapify the entire array, then attempt to `heappop` every element to calculate the sum.
+5.  **Heap Sort**: Heapify the entire array, then attempt to `heappop` every element to check sorting state.
 6.  **Quick Sort**: Execute quick sort, then check all elements' sorting state.
 
 Execution time of each step is measured and reported to `stdout`.
