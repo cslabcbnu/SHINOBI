@@ -60,8 +60,8 @@ void print_usage(const char* prog) {
 }
 
 
-void print_execution_time(clock_t start, clock_t end) {
-	double elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
+void print_execution_time(struct timespec start, struct timespec end) {
+	double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 	int hours = (int)(elapsed_time / 3600);
 	int min = ((int)(elapsed_time) % 3600) / 60;
 	int sec = (int)(elapsed_time) % 60;
@@ -160,11 +160,31 @@ void quick_sort(long long int* arr, long long int low, long long int high) {
 }
 
 
+long long int* init_bench(long long int* bench) {
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
+
+	bench = (long long int*)malloc(idx * sizeof(long long int));
+	if (!bench) {
+		fprintf(stderr, "[ERROR]  Memmory allocation failed\n");
+		exit(-1);
+	}
+	for (long long int i = 0; i < idx; i++) {
+		bench[i] = i;
+	}
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	print_execution_time(start, end);
+
+	return bench;
+}
+
+
 void seq_sum(long long int* bench) {
 	long long int ans = idx * (idx - 1) / 2;
 	long long int target = 0;
 
-	clock_t start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (long long int i = 0; i < idx; i++) {
 		target += bench[i];
 	}
@@ -172,7 +192,7 @@ void seq_sum(long long int* bench) {
 		fprintf(stderr, "[ERROR]  Sequential Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
 		exit(-1); 
 	}
-	clock_t end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 }
 
@@ -181,7 +201,8 @@ void bin_sum(long long int* bench) {
 	long long int ans = idx * (idx - 1) / 2;
 	long long int target = 0;
 	
-	clock_t start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (long long int i = 0; i < idx; i++) {
 		target += binary_search(bench, 0, idx - 1, i);
 	}
@@ -189,13 +210,14 @@ void bin_sum(long long int* bench) {
 		fprintf(stderr, "[ERROR]  Binary Search Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
 		exit(-1); 
 	}
-	clock_t end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 }
 
 
 void shuffle(long long int* bench) {
-	clock_t start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (long long int i = 0; i < idx; i++) {
 		bench[i] = i;
 	}
@@ -203,7 +225,7 @@ void shuffle(long long int* bench) {
 		long long int j = rand() % i;
 		swap(&bench[i], &bench[j]);
 	}
-	clock_t end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 	fprintf(stdout, "[ALERT]  Sattolo Algorithm Shuffle done\n");
 }
@@ -214,7 +236,8 @@ void shuffle_sum(long long int* bench) {
 	long long int ans = idx * (idx - 1) / 2;
 	long long int target = 0;
 	long long int i = 0;
-	clock_t start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	do {
 		target += bench[i];
 		i = bench[i];
@@ -223,7 +246,7 @@ void shuffle_sum(long long int* bench) {
 		fprintf(stderr, "[ERROR]  Tracked Shuffle Sum Calculation failed., ans = %lld target = %lld\n", ans, target);
 		exit(-1); 
 	}
-	clock_t end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 }
 
@@ -232,20 +255,21 @@ void heap(long long int* bench) {
 	shuffle(bench);
 	long long int hsize = idx;
 	
-	clock_t start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (long long int i = hsize / 2 - 1; i >= 0; i--) heapify(bench, idx, i);
-	clock_t end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 	fprintf(stdout, "[ALERT]  Heapify done\n");
 
-	start = clock();
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (long long int i = idx - 1; i >= 0; i--) {
 		if (i !=  heappop(bench, &hsize)) {
 			fprintf(stderr, "[ERROR]  Heapify / Heappop failed., target = %lld\n", i);
 			exit(-1); 
 		}
 	}
-	end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 	fprintf(stdout, "[ALERT]  Heappop done\n");
 }
@@ -253,7 +277,8 @@ void heap(long long int* bench) {
 
 void quick(long long int* bench) {
 	shuffle(bench);
-	clock_t start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	quick_sort(bench, 0, idx - 1);
 	for (long long int i = 0; i < idx; i++) {
 		if (bench[i] != i) {
@@ -261,13 +286,13 @@ void quick(long long int* bench) {
 			exit(-1);
 		}
 	}
-	clock_t end = clock();
+	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end);
 }
 
 
 int main(int argc, char *argv[]) {
-	long long m_size = -1;
+	long long int m_size = -1;
 	int s[5] = {1, 1, 1, 1, 1};
 
 	for (int i = 1; i < argc; i++) {
@@ -302,22 +327,14 @@ int main(int argc, char *argv[]) {
 	}
 
 	srand(time(NULL));
-	clock_t start, end;
 	idx = m_size / 8;
 	
 	// 0. Benchmark preparation
-	start = clock();
+	struct timespec start, end;
+	clock_gettime(CLOCK_MONOTONIC, &start);
 
-	long long int* bench = (long long int*)malloc(idx * sizeof(long long int));
-	if (!bench) {
-		fprintf(stderr, "[ERROR]  Memmory allocation failed\n");
-		return -1;
-	}
-	for (long long int i = 0; i < idx; i++) {
-		bench[i] = i;
-	}
-	end = clock();
-	print_execution_time(start, end);
+	long long int* bench = NULL;
+	bench = init_bench(bench);
 	fprintf(stdout, "[ALERT]  Benchmarking ready\n\n");
 
 	// 1. Sequential Summation
@@ -357,6 +374,8 @@ int main(int argc, char *argv[]) {
 	}
 
 
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	print_execution_time(start, end);
 	fprintf(stdout, "[ALERT]  SHINOBI successfully completed.\n");
 
 	free(bench);
