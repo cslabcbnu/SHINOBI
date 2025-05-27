@@ -38,7 +38,7 @@ make
 
 ### Usage
 ```bash
-Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>] [-s4 <num>]
+Usage: ./bin/SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>] [-s4 <num>]
   -m <size>      memory size that you need (e.g. 8g, 512m, 1024k)
   -s0 <num>      sequence 0 (Sequential Sum Calculation) repeat times (default: 1)
   -s1 <num>      sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)
@@ -59,7 +59,7 @@ If you want to disable some sequence, type 0 that sequence
 
 ## Example
 ```bash
-./SHINOBI_BASE -m 1g -s0 2 -s2 2 -s1 2 -s3 2 -s4 2
+./bin/SHINOBI_BASE -m 1g -s0 2 -s1 2 -s2 2 -s3 2 -s4 2
 
 [RESULT] Execution Time : 0h 0m 1s 119ms
 [ALERT]  Benchmarking ready
