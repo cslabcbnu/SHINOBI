@@ -8,6 +8,7 @@ SHINOBI (SHINOBI Is Not Only Benchmark Iterator) is a flexible benchmark tool de
 
 *   **Specific Memory Capacity Benchmarking**: Accurately specify the memory capacity to be tested in kibibytes (KiB) or mebibytes (MiB), also gibibytes (GiB).
 *   **Easy to Use**: Easily execute and configure via a command-line interface.
+*   **Multi-Threaded Version**: Can execute benchmark with multi-threaded version. (e.g. 1G 4threads -> 250MiB for each thread)
 
 ## How it Works
 
@@ -39,6 +40,15 @@ make
 ```bash
 Usage: ./SHINOBI_BASE -m <size>[g|m|k] [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>] [-s4 <num>]
   -m <size>      memory size that you need (e.g. 8g, 512m, 1024k)
+  -s0 <num>      sequence 0 (Sequential Sum Calculation) repeat times (default: 1)
+  -s1 <num>      sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)
+  -s2 <num>      sequence 2 (Sattolo Algorithm Shuffle ~ Tracked Summation) repeat times (default: 1)
+  -s3 <num>      sequence 3 (Sattolo Algorithm Shuffle ~ Heap Sort) repeat times (default: 1)
+  -s4 <num>      sequence 4 (Sattolo Algorithm Shuffle ~ Quick Sort) repeat times (default: 1)
+
+Usage: ./bin/SHINOBI_MT -m <size>[g|m|k] -t <num> [-s0 <num>] [-s1 <num>] [-s2 <num>] [-s3 <num>] [-s4 <num>]
+  -m <size>      memory size that you need (e.g. 8g, 512m, 1024k)
+  -t <num>       numbers of threads that you need (e.g. 2, 4, 8)
   -s0 <num>      sequence 0 (Sequential Sum Calculation) repeat times (default: 1)
   -s1 <num>      sequence 1 (Binary Search Sum Calculation) repeat times (default: 1)
   -s2 <num>      sequence 2 (Sattolo Algorithm Shuffle ~ Tracked Summation) repeat times (default: 1)
@@ -100,7 +110,9 @@ If you want to disable some sequence, type 0 that sequence
 [ALERT]  SHINOBI successfully completed.
 ```
 ![Image](https://github.com/user-attachments/assets/254bb105-ca4e-4943-b314-9d1418aae687)
-
+* 1G for base version
+![Image](https://github.com/user-attachments/assets/d000b911-fe3e-4a1e-9682-123d359e57d6)
+* 1G 4threads for MT version
 *recorded by damo(https://github.com/damonitor/damo)
 
 ## Contact
