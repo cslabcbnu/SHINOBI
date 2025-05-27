@@ -110,9 +110,15 @@ If you want to disable some sequence, type 0 that sequence
 [ALERT]  SHINOBI successfully completed.
 ```
 ![Image](https://github.com/user-attachments/assets/254bb105-ca4e-4943-b314-9d1418aae687)
-* 1G for base version
+
+*1G for base version
+
+
 ![Image](https://github.com/user-attachments/assets/d000b911-fe3e-4a1e-9682-123d359e57d6)
-* 1G 4threads for MT version
+
+*1G 4threads for MT version
+
+
 *recorded by damo(https://github.com/damonitor/damo)
 
 ## Contact
