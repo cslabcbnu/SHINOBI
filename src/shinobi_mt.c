@@ -353,7 +353,7 @@ void* thread_func(void* arg) {
 
 int main(int argc, char *argv[]) {
 	long long int m_size = -1;
-	char t = -1;
+	char t;
 	char s[5] = {1, 1, 1, 1, 1};
 
 	for (int i = 1; i < argc; i++) {
@@ -391,12 +391,6 @@ int main(int argc, char *argv[]) {
 
 	if (m_size == -1) {
 		fprintf(stderr, "[ERROR]  -m option is required.\n");
-		print_usage(argv[0]);
-		return -1;
-	}
-
-	if (t == -1) {
-		fprintf(stderr, "[ERROR]  -t option is required.\n");
 		print_usage(argv[0]);
 		return -1;
 	}
