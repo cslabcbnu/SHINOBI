@@ -278,6 +278,7 @@ void quick(long long int* bench, int thread_no) {
 struct thread_args {
 	int thread_no;
 	char s[5];
+	long long int* part;
 };
 
 
@@ -292,7 +293,7 @@ void* thread_func(void* arg) {
 	struct timespec start, end;
 	clock_gettime(CLOCK_MONOTONIC, &start);
 
-	long long int* bench = (long long int*)malloc(idx * sizeof(long long int));
+	long long int* bench = args->part;
 	if (!bench) {
 		fprintf(stderr, "[THREAD %d][ERROR] Memory allocation failed\n", thread_no);
 		pthread_exit(NULL);
@@ -345,7 +346,6 @@ void* thread_func(void* arg) {
 
 	fprintf(stdout, "[THREAD %d][ALERT]  SHINOBI successfully completed.\n\n", thread_no);
 
-	free(bench);
 	pthread_exit(NULL);
 
 }
@@ -408,6 +408,7 @@ int main(int argc, char *argv[]) {
 
 	struct timespec start, end;
 	clock_gettime(CLOCK_MONOTONIC, &start);
+	long long int* bench = (long long int*)malloc(idx * t * sizeof(long long int));
 
 	// 0. Thraed preparation
 	for (int i = 0; i < t; i++) {
@@ -415,6 +416,7 @@ int main(int argc, char *argv[]) {
 		for (int j = 0; j < 5; j++) {
 			args[i].s[j] = s[j];
 		}
+		args[i].part = bench + i * idx;
 		if (pthread_create(&threads[i], NULL, thread_func, &args[i])) {
 			fprintf(stderr, "[Thread %d][ERROR] pthread_create failed\n", i);
 			return -1;
@@ -427,6 +429,8 @@ int main(int argc, char *argv[]) {
 	
 	clock_gettime(CLOCK_MONOTONIC, &end);
 	print_execution_time(start, end, -1);
+
+	free(bench);
 	fprintf(stdout, "[ALERT]  SHINOBI successfully completed.\n");
 
 	return 0;

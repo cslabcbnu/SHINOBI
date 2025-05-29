@@ -17,5 +17,5 @@ $(BINDIR):
 	mkdir -p $(BINDIR)
 
 clean:
-	rm -f $(BINDIR)/SHINOBI_BASE $(BINDIR)/SHINOBI_MT
+	rm -rf $(BINDIR)
 
